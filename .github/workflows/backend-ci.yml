@@ -1,0 +1,39 @@
+name: Backend and Admin CI
+
+on:
+  push:
+    branches: [main, 'codex/**']
+  pull_request:
+
+jobs:
+  api-admin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install
+      - name: Lint API
+        run: npm --workspace services/api run lint
+      - name: Build API
+        run: npm --workspace services/api run build
+      - name: Run API tests
+        run: npm --workspace services/api run test -- --runInBand
+      - name: Build Admin Web
+        run: npm --workspace apps/admin_web run build
+
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm install
+      - name: Lint OpenAPI
+        run: npx @redocly/cli lint packages/contracts/openapi/foodily-v1.yaml
+      - name: Check schema drift
+        run: node scripts/check-schema-drift.mjs

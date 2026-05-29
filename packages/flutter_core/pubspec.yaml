@@ -1,0 +1,20 @@
+name: flutter_core
+description: Shared core package for Foodily apps.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.10.7
+  flutter: ">=3.35.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  intl: ^0.20.2
+  http: ^1.2.2
+  translator: ^1.0.3+1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0

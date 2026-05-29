@@ -1,0 +1,10 @@
+name: foodily_workspace
+
+packages:
+  - apps/**
+  - packages/**
+
+scripts:
+  bootstrap:
+    run: flutter pub get
+    description: Bootstrap Flutter packages and apps.

@@ -1,0 +1,8 @@
+{
+  "name": "@foodily/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "validate:openapi": "echo 'Plug spectral/openapi-cli here'"
+  }
+}

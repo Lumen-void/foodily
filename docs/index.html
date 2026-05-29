@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Foodily Operations</title>
+  <style>
+    :root{--bg:#070b12;--panel:#111827;--line:#263244;--ink:#f8fafc;--muted:#9ca3af;--accent:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#070b12,#111827 48%,#07120d);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,sans-serif}
+    header{padding:32px clamp(18px,4vw,56px);border-bottom:1px solid var(--line);display:flex;gap:24px;align-items:center;justify-content:space-between}.brand{font-size:28px;font-weight:900}.nav{display:flex;gap:10px;flex-wrap:wrap}.nav span{padding:9px 12px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-weight:700}
+    main{padding:42px clamp(18px,4vw,56px);display:grid;gap:26px}.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:24px;align-items:stretch}.hero h1{font-size:clamp(42px,7vw,92px);line-height:.94;margin:0}.hero p{font-size:20px;line-height:1.6;color:var(--muted);max-width:760px}
+    .panel{background:rgba(17,24,39,.82);border:1px solid var(--line);border-radius:8px;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.24)}.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}article{background:#0c1320;border:1px solid var(--line);border-radius:8px;padding:18px}article span,small{display:block;color:var(--muted);font-weight:700}article strong{display:block;margin:10px 0;font-size:32px}
+    .ops{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.lane{min-height:190px}.bar{height:12px;background:#1f2937;border-radius:999px;overflow:hidden;margin:14px 0}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#38bdf8)}
+    .critical{border-color:rgba(239,68,68,.5)}.watch{border-color:rgba(245,158,11,.5)}@media(max-width:900px){.hero,.kpis,.ops{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header><div class="brand">Foodily</div><nav class="nav"><span>Orders</span><span>Dispatch</span><span>Menus</span><span>Offers</span><span>Payments</span><span>Analytics</span></nav></header>
+  <main>
+    <section class="hero"><div><h1>Food operations command dashboard.</h1><p>Public-safe static view of the Foodily admin experience: order flow, subscriptions, partner dispatch, payment health and growth controls using fake demo data.</p></div><div class="panel"><h2>Live Workflow Preview</h2><p>City filters, SLA signals, campaign guardrails and payment monitoring are represented without exposing production APIs or records.</p></div></section>
+    <section class="kpis"><article><span>Gross orders today</span><strong>2,184</strong><small>+9.4%</small></article><article><span>Active subscriptions</span><strong>1,284</strong><small>+6.2%</small></article><article><span>On-time fulfillment</span><strong>96.2%</strong><small>SLA healthy</small></article><article><span>Payment success</span><strong>98.1%</strong><small>Stable gateway</small></article></section>
+    <section class="ops">
+      <div class="panel lane"><h2>City lanes</h2><p>Delhi lunch queue requires partner escalation.</p><div class="bar"><i style="width:88%"></i></div><small>Fill rate 88%</small></div>
+      <div class="panel lane watch"><h2>Offer guardrails</h2><p>Noida campaign near daily budget cap.</p><div class="bar"><i style="width:81%"></i></div><small>81% spent</small></div>
+      <div class="panel lane critical"><h2>Incident queue</h2><p>One P1 fulfillment incident and two P2 operational watches.</p><div class="bar"><i style="width:64%"></i></div><small>Resolution ETA 15 min</small></div>
+    </section>
+  </main>
+</body>
+</html>

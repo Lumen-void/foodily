@@ -1,0 +1,31 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [main, 'codex/**']
+  pull_request:
+
+jobs:
+  flutter-checks:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - packages/flutter_core
+          - packages/flutter_ui
+          - apps/consumer_app
+          - apps/delivery_app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.6'
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ${{ matrix.target }}
+      - name: Analyze
+        run: flutter analyze
+        working-directory: ${{ matrix.target }}
+      - name: Test
+        run: flutter test
+        working-directory: ${{ matrix.target }}

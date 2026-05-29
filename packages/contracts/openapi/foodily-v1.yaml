@@ -1,0 +1,690 @@
+openapi: 3.0.3
+info:
+  title: Foodily API
+  version: 0.2.0
+  description: Production-oriented multi-city tiffin ordering API
+  license:
+    name: Proprietary
+    url: https://foodily.app/legal
+servers:
+  - url: https://api.foodily.app/v1
+security:
+  - bearerAuth: []
+paths:
+  /health:
+    get:
+      summary: Service health check
+      security: []
+      responses:
+        '200':
+          description: Service health
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: getHealth
+  /auth/request-otp:
+    post:
+      summary: Request OTP (MSG91)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestOtp'
+      responses:
+        '200':
+          description: OTP request accepted
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: requestOtp
+  /auth/verify-otp:
+    post:
+      summary: Verify OTP and issue access/refresh tokens
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOtp'
+      responses:
+        '200':
+          description: Tokens issued
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: verifyOtp
+  /auth/refresh:
+    post:
+      summary: Refresh access token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshToken'
+      responses:
+        '200':
+          description: Tokens refreshed
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: refreshAuthToken
+  /cities:
+    get:
+      summary: List active cities
+      responses:
+        '200':
+          description: City list
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: listCities
+  /zones:
+    get:
+      summary: List zones by city
+      parameters:
+        - in: query
+          name: cityId
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Zone list
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: listZones
+  /menus/same-day:
+    get:
+      summary: Same-day menu
+      parameters:
+        - in: query
+          name: cityId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: date
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: slot
+          schema:
+            $ref: '#/components/schemas/MealSlot'
+      responses:
+        '200':
+          description: Meals list
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: listSameDayMenus
+  /menus/subscription:
+    get:
+      summary: Subscription menu
+      parameters:
+        - in: query
+          name: cityId
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Meals list
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: listSubscriptionMenus
+  /cart/items:
+    post:
+      summary: Add cart item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddCartItem'
+      responses:
+        '200':
+          description: Cart updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: addCartItem
+  /cart:
+    get:
+      summary: Get cart
+      responses:
+        '200':
+          description: Cart details
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: getCart
+  /orders/quote:
+    post:
+      summary: Quote order amount and validations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuoteOrder'
+      responses:
+        '200':
+          description: Quote response
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: quoteOrder
+  /orders:
+    post:
+      summary: Create order
+      parameters:
+        - in: header
+          name: idempotency-key
+          schema:
+            type: string
+          required: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrder'
+      responses:
+        '200':
+          description: Order created
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: createOrder
+  /orders/{id}:
+    get:
+      summary: Get order
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order details
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: getOrderById
+  /orders/{id}/timeline:
+    get:
+      summary: Get order status timeline
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Timeline response
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: getOrderTimeline
+  /subscriptions:
+    post:
+      summary: Create subscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscription'
+      responses:
+        '200':
+          description: Subscription created
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: createSubscription
+  /subscriptions/{id}:
+    get:
+      summary: Get subscription
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Subscription details
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: getSubscriptionById
+  /subscriptions/{id}/pause:
+    post:
+      summary: Pause subscription
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Subscription paused
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: pauseSubscription
+  /subscriptions/{id}/resume:
+    post:
+      summary: Resume subscription
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Subscription resumed
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: resumeSubscription
+  /payments/create-order:
+    post:
+      summary: Create Razorpay payment order
+      parameters:
+        - in: header
+          name: idempotency-key
+          schema:
+            type: string
+          required: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentOrder'
+      responses:
+        '200':
+          description: Payment order created
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: createPaymentOrder
+  /payments/webhook/razorpay:
+    post:
+      summary: Razorpay webhook receiver
+      security: []
+      parameters:
+        - in: header
+          name: x-razorpay-signature
+          schema:
+            type: string
+          required: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RazorpayWebhook'
+      responses:
+        '200':
+          description: Webhook processed
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: handleRazorpayWebhook
+  /referrals/apply:
+    post:
+      summary: Apply referral code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyReferral'
+      responses:
+        '200':
+          description: Referral result
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: applyReferralCode
+  /wallet:
+    get:
+      summary: Get wallet balance and ledger
+      responses:
+        '200':
+          description: Wallet response
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: getWallet
+  /delivery/jobs:
+    get:
+      summary: List jobs for current delivery partner
+      parameters:
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/OrderStatus'
+          required: false
+      responses:
+        '200':
+          description: Delivery jobs list
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: listDeliveryJobs
+  /delivery/jobs/{id}/status:
+    post:
+      summary: Update delivery job status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDeliveryStatus'
+      responses:
+        '200':
+          description: Delivery job updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: updateDeliveryJobStatus
+  /admin/orders:
+    get:
+      summary: Admin list orders
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/OrderStatus'
+        - in: query
+          name: cityId
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Paginated orders
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: adminListOrders
+  /admin/subscriptions:
+    get:
+      summary: Admin list subscriptions
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/SubscriptionStatus'
+      responses:
+        '200':
+          description: Paginated subscriptions
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: adminListSubscriptions
+  /admin/dispatch/jobs:
+    get:
+      summary: Admin list dispatch jobs
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/OrderStatus'
+        - in: query
+          name: cityId
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Paginated dispatch jobs
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: adminListDispatchJobs
+  /admin/metrics/overview:
+    get:
+      summary: Admin operational KPIs
+      responses:
+        '200':
+          description: Metrics payload
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: adminGetMetricsOverview
+  /admin/dispatch/assign:
+    post:
+      summary: Assign order to delivery partner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignDispatch'
+      responses:
+        '200':
+          description: Dispatch assignment created
+        '400':
+          $ref: '#/components/responses/BadRequest'
+      operationId: adminAssignDispatch
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    Page:
+      in: query
+      name: page
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      required: false
+    Limit:
+      in: query
+      name: limit
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+      required: false
+  schemas:
+    MealSlot:
+      type: string
+      enum:
+        - BREAKFAST
+        - LUNCH
+        - DINNER
+    OrderStatus:
+      type: string
+      enum:
+        - CREATED
+        - CONFIRMED
+        - PREPARING
+        - OUT_FOR_DELIVERY
+        - DELIVERED
+        - CANCELLED
+    SubscriptionStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - PAUSED
+        - CANCELLED
+        - EXPIRED
+    RequestOtp:
+      type: object
+      required:
+        - phone
+      properties:
+        phone:
+          type: string
+    VerifyOtp:
+      type: object
+      required:
+        - phone
+        - otp
+      properties:
+        phone:
+          type: string
+        otp:
+          type: string
+    RefreshToken:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+    AddCartItem:
+      type: object
+      required:
+        - mealId
+        - qty
+      properties:
+        mealId:
+          type: string
+        qty:
+          type: integer
+          minimum: 1
+    QuoteOrder:
+      type: object
+      required:
+        - cityId
+        - zoneId
+        - deliveryWindow
+      properties:
+        cityId:
+          type: string
+        zoneId:
+          type: string
+        deliveryWindow:
+          type: string
+        useWallet:
+          type: boolean
+    CreateOrder:
+      type: object
+      required:
+        - type
+        - paymentOrderId
+        - cityId
+        - zoneId
+        - deliveryWindow
+      properties:
+        type:
+          type: string
+          enum:
+            - ONE_TIME
+            - SUBSCRIPTION
+        paymentOrderId:
+          type: string
+        cityId:
+          type: string
+        zoneId:
+          type: string
+        deliveryWindow:
+          type: string
+        useWallet:
+          type: boolean
+    CreateSubscription:
+      type: object
+      required:
+        - cadence
+        - preferredWindow
+        - startDate
+      properties:
+        cadence:
+          type: string
+          enum:
+            - WEEKLY
+            - MONTHLY
+        preferredWindow:
+          type: string
+        startDate:
+          type: string
+          format: date
+    CreatePaymentOrder:
+      type: object
+      required:
+        - amount
+        - currency
+      properties:
+        amount:
+          type: integer
+          minimum: 1
+        currency:
+          type: string
+          example: INR
+    RazorpayWebhook:
+      type: object
+      required:
+        - event
+        - paymentId
+        - orderId
+      properties:
+        event:
+          type: string
+        paymentId:
+          type: string
+        orderId:
+          type: string
+    ApplyReferral:
+      type: object
+      required:
+        - code
+      properties:
+        code:
+          type: string
+    UpdateDeliveryStatus:
+      type: object
+      required:
+        - status
+        - handoffCode
+      properties:
+        status:
+          type: string
+          enum:
+            - CONFIRMED
+            - OUT_FOR_DELIVERY
+            - DELIVERED
+        handoffCode:
+          type: string
+          minLength: 4
+    AssignDispatch:
+      type: object
+      required:
+        - orderId
+        - deliveryPartnerId
+        - cityId
+      properties:
+        orderId:
+          type: string
+        deliveryPartnerId:
+          type: string
+        cityId:
+          type: string
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: BAD_REQUEST
+                  message:
+                    type: string
+                    example: Invalid request payload
