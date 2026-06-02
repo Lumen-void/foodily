@@ -66,16 +66,12 @@ const fallback: KitchenRow[] = [
   },
 ];
 
-type PageProps = {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-};
-
 function kitchenName(cityName: string): string {
   return `${cityName.toUpperCase()} CENTRAL`;
 }
 
-export default async function CitiesPage({ searchParams }: PageProps) {
-  const search = await resolveSearch(searchParams);
+export default async function CitiesPage() {
+  const search: Record<string, string | string[] | undefined> = {};
   const selectedDate = normalizedDay(queryString(search.date));
   const query = queryString(search.q).trim();
   const cityFilter = queryString(search.city).trim();

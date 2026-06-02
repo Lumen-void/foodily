@@ -62,10 +62,6 @@ const fallback: PaginatedPayments = {
   limit: 20,
 };
 
-type PageProps = {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-};
-
 function settlementFromStatus(status: string): string {
   const upper = status.toUpperCase();
   if (upper === 'CAPTURED') return 'SCHEDULED';
@@ -74,8 +70,8 @@ function settlementFromStatus(status: string): string {
   return 'PENDING';
 }
 
-export default async function PaymentsPage({ searchParams }: PageProps) {
-  const search = await resolveSearch(searchParams);
+export default async function PaymentsPage() {
+  const search: Record<string, string | string[] | undefined> = {};
   const selectedDate = normalizedDay(queryString(search.date));
   const query = queryString(search.q).trim();
   const cityFilter = queryString(search.city).trim();

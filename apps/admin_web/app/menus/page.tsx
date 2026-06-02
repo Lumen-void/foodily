@@ -63,10 +63,6 @@ const fallback: MenuRow[] = [
   },
 ];
 
-type PageProps = {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-};
-
 function kitchenName(cityName: string): string {
   return `${cityName.toUpperCase()} CENTRAL`;
 }
@@ -77,8 +73,8 @@ function normalizeSlot(raw: string): string {
   return 'LUNCH';
 }
 
-export default async function MenusPage({ searchParams }: PageProps) {
-  const search = await resolveSearch(searchParams);
+export default async function MenusPage() {
+  const search: Record<string, string | string[] | undefined> = {};
   const selectedDate = normalizedDay(queryString(search.date));
   const query = queryString(search.q).trim();
   const cityFilter = queryString(search.city).trim();

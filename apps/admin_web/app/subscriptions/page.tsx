@@ -50,12 +50,8 @@ const fallback: PaginatedSubscriptions = {
   limit: 20,
 };
 
-type PageProps = {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-};
-
-export default async function SubscriptionsPage({ searchParams }: PageProps) {
-  const search = await resolveSearch(searchParams);
+export default async function SubscriptionsPage() {
+  const search: Record<string, string | string[] | undefined> = {};
   const selectedDate = normalizedDay(queryString(search.date));
   const query = queryString(search.q).trim();
   const cityFilter = queryString(search.city).trim();
